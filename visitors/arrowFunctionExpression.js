@@ -25,6 +25,9 @@ var arrowFunctionExpressionVisitor = function(node) {
     false,
     false
   );
+  if (node.rest) {
+    replacementFunc.rest = node.rest;
+  }
   // handle functions that make use of `this` by adding `.bind(this)` to them
   if (utils.containsChildOfType(node.body, Syntax.ThisExpression)) {
     return b.callExpression(
