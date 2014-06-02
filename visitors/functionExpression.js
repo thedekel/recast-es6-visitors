@@ -7,37 +7,38 @@ var b = recast.types.builders;
  * on the `arguments` hidden param on the first line of a function.
  */
 var functionExpressionVisitor = function(node) {
-  this.genericVisit(node);
   // helper function to produce a new body for the function with an additional
   // variable declaration
-  var genBodyWithRestVar = function() {
-    // node.rest is guaranteed to be not `null` if this executes
+  var addRestDecToBody = function(funcExp) {
+    // funcExp.rest is guaranteed to be not `null` if this executes
     var restDec = b.variableDeclaration(
       "var",
       [b.variableDeclarator(
-        b.identifier(node.rest.name),
+        b.identifier(funcExp.rest.name),
         b.callExpression(
           b.identifier('Array.prototype.slice.call'),
           [
             b.identifier('arguments'),
-            b.literal(node.params.length)
+            b.literal(funcExp.params.length)
           ]
         )
       )]
     );
-    node.body.body.unshift(restDec);
-    return node.body;
+    funcExp.body.body.unshift(restDec);
   };
   if (node.rest != null) {
+    addRestDecToBody(node),
+    this.genericVisit(node);
     return b.functionExpression(
       node.id,
       node.params,
-      genBodyWithRestVar(node),
-      node.generator,
+      node.body,
+      false,
       node.expression,
       false
     )
   }
+  this.genericVisit(node);
   return node;
 }
 
