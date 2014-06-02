@@ -19,6 +19,7 @@ project:
 {
   ...
   "dependencies": {
+    "recast": "*",
     "esprima-fb": "^3001.1.0-dev-harmony-fb",
     "recast-es6-visitors": "git://github.com/thedekel/recast-es6-visitors.git",
     ...
@@ -63,7 +64,7 @@ var outputString = recast.prettyPrint(equivalentEs5Ast).code;
 eval(outputString);
 
 // `es6func` was added to the global namespace by `eval`
-var resulltObj = es6func("hello", 42, true, null);
+var resultObj = es6func("hello", 42, true, null);
 
 console.log(resultObj.a) // "hello"
 console.log(resultObj.b) // 42
