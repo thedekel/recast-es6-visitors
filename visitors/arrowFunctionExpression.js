@@ -5,7 +5,6 @@ var Syntax = recast.Syntax;
 var utils = require('../lib/utils')
 
 var arrowFunctionExpressionVisitor = function(node) {
-  this.genericVisit(node);
   var funcBody = node.body;
   // confirm that the function body has a return statement or add one on the
   // last expression
@@ -36,6 +35,7 @@ var arrowFunctionExpressionVisitor = function(node) {
     [b.thisExpression()]
     );
   }
+  this.genericVisit(replacementFunc);
   return replacementFunc;
 };
 
