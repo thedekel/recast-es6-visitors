@@ -27,6 +27,8 @@ var arrowFunctionExpressionVisitor = function(node) {
   );
   if (node.rest) {
     replacementFunc.rest = node.rest;
+    var restParamVisitor = require('./functionExpression').bind(this);
+    replacementFunc = restParamVisitor(replacementFunc);
   }
   // handle functions that make use of `this` by adding `.bind(this)` to them
   if (utils.containsChildOfType(node.body, Syntax.ThisExpression)) {
@@ -39,7 +41,6 @@ var arrowFunctionExpressionVisitor = function(node) {
     [b.thisExpression()]
     );
   }
-  this.genericVisit(replacementFunc);
   return replacementFunc;
 };
 
