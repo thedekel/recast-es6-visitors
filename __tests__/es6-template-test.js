@@ -47,7 +47,7 @@ describe('es6-template', function() {
 
   function transform(code) {
     return recast.prettyPrint(
-      (new Visitor()).visit(recast.parse(code, recastOptions))
+      es6Visitor.transform(recast.parse(code, recastOptions))
     ).code;
   }
 
@@ -104,7 +104,6 @@ describe('es6-template', function() {
 
         expect(siteObj.raw).toEqual(raw);
     }
-
     it("should transform simple literals", function() {
         expectTransform("`foo bar`", "(\"foo bar\")");
         expectEval("`foo bar`", "foo bar");
@@ -135,7 +134,6 @@ describe('es6-template', function() {
         expectTransform("`${foo + 5} ${bar}`", "((foo + 5) + \" \" + bar)");
         expectTransform("`${(function(b) {alert(4);})(a)}`", "((function(b) {alert(4);})(a))");
     });
-
     it("should transform tags with simple templates", function() {
         var tag = function(elements) {
             expectSiteObj(elements, ["foo bar"], ["foo bar"]);

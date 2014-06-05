@@ -5,13 +5,18 @@ var b = recast.types.builders;
  */
 var taggedTemplateExpression = function(node) {
   var cookedLiteralsArray, rawLiteralsArray;
-  var templateLiteral = node.quasi;
-  cookedLiteralsArray = templateLiteral.quasis.map(function(q){
-    return b.literal(q.value.cooked);
-  });
-  rawLiteralsArray = templateLiteral.quasis.map(function(q){
-    return b.literal(q.value.raw);
-  });
+  var templateLiteral = node.original.quasi;
+  if (templateLiteral.quasis) {
+    cookedLiteralsArray = templateLiteral.quasis.map(function(q){
+      return b.literal(q.value.cooked);
+    });
+    rawLiteralsArray = templateLiteral.quasis.map(function(q){
+      return b.literal(q.value.raw);
+    });
+  } else {
+    cookedLiteralsArray = [templateLiteral];
+    rawLiteralsArray = [templateLiteral];
+  }
   var siteObjGenBody = b.blockStatement([
     // line 1: var siteObj = [cookedLiteral1 cookedLiteral2, ...];
     b.variableDeclaration(
@@ -50,16 +55,18 @@ var taggedTemplateExpression = function(node) {
   );
   var tagFunctionCallParams = [siteObjGenFunc]
   // add all the additional params to the function call arguments
-  for (var ii = 0; ii < templateLiteral.expressions.length; ii++) {
-    this.genericVisit(templateLiteral.expressions[ii]);
-    tagFunctionCallParams.push(templateLiteral.expressions[ii]);
+  if (templateLiteral.expressions) {
+    for (var ii = 0; ii < templateLiteral.expressions.length; ii++) {
+      //this.genericVisit(templateLiteral.expressions[ii]);
+      tagFunctionCallParams.push(templateLiteral.expressions[ii]);
+    }
   }
   // produce the tag function call expression
   var tagCallExpression = b.callExpression(
     node.tag,
     tagFunctionCallParams
   );
-  return tagCallExpression;
+  this.replace(tagCallExpression);
 };
 
 module.exports = taggedTemplateExpression;

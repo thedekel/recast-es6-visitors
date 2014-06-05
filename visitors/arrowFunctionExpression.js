@@ -5,7 +5,7 @@ var Syntax = recast.Syntax;
 var utils = require('../lib/utils')
 
 var arrowFunctionExpressionVisitor = function(node) {
-  this.genericVisit(node);
+  //this.genericVisit(node);
   var funcBody = node.body;
   // confirm that the function body has a return statement or add one on the
   // last expression
@@ -27,21 +27,21 @@ var arrowFunctionExpressionVisitor = function(node) {
   );
   if (node.rest) {
     replacementFunc.rest = node.rest;
-    var restParamVisitor = require('./functionExpression').bind(this);
-    replacementFunc = restParamVisitor(replacementFunc);
   }
+  debugger;
   // handle functions that make use of `this` by adding `.bind(this)` to them
   if (utils.containsChildOfType(node.body, Syntax.ThisExpression)) {
-    return b.callExpression(
+    this.replace( b.callExpression(
       b.memberExpression(
         replacementFunc,
         b.identifier('bind'),
         false
     ),
     [b.thisExpression()]
-    );
+    ));
+  } else {
+    this.replace(replacementFunc);
   }
-  return replacementFunc;
 };
 
 module.exports = arrowFunctionExpressionVisitor;

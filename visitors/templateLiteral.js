@@ -4,7 +4,7 @@ var b = recast.types.builders;
 /**
  */
 var templateLiteralVisitor = function(node) {
-  this.genericVisit(node);
+  //this.genericVisit(node);
   var templateElement, jj, ii;
   var templateElements = node.quasis;
   var returnVal = b.literal('');
@@ -35,7 +35,8 @@ var templateLiteralVisitor = function(node) {
       jj++;
     }
   }
-  return returnVal;
+  returnVal.original = node;
+  this.replace(returnVal);
 }
 
 module.exports = templateLiteralVisitor;

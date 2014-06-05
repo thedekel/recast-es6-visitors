@@ -10,7 +10,9 @@
   "license": "ISC",
   "dependencies": {
     "recast": "^0.5.20",
-    "esprima-fb": "^3001.1.0-dev-harmony-fb"
+    "esprima-fb": "^3001.1.0-dev-harmony-fb",
+    "es6-class": "*",
+    "ast-util": "*"
   },
   "devDependencies": {
     "jest-cli": "^0.1.11"

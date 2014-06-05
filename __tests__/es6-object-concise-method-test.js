@@ -45,6 +45,20 @@ describe('es6-object-short-notation', function() {
     };
   });
 
+  function transform(code) {
+    return recast.prettyPrint(
+      es6Visitor.transform(recast.parse(code, recastOptions))
+    ).code;
+  }
+
+  function expectTransform(code, result) {
+    // use recast to parse both code snippets, visit the ES6 version with
+    // our ES6->ES5 AST converter, and compare the printed result of both
+    // ASTs
+    expect(transform(code)).
+      toEqual(recast.prettyPrint(recast.parse(result, recastOptions)).code);
+  }
+
   it('should transform concise methods', function() {
     var code = [
       'var foo = {',
@@ -53,11 +67,7 @@ describe('es6-object-short-notation', function() {
       '  }',
       '};'
     ].join('\n');
-    var ast = recast.parse(code, recastOptions);
-    var visitor = new Visitor();
-    var outputAst = visitor.visit(ast);
-    var outputCode = recast.prettyPrint(outputAst).code;
-    eval(outputCode);
+    eval(transform(code));
     expect(foo.bar(42)).toEqual(42);
   });
 
@@ -70,11 +80,7 @@ describe('es6-object-short-notation', function() {
       '};'
     ].join('\n');
 
-    var ast = recast.parse(code, recastOptions);
-    var visitor = new Visitor();
-    var outputAst = visitor.visit(ast);
-    var outputCode = recast.prettyPrint(outputAst).code;
-    eval(outputCode);
+    eval(transform(code));
     expect(foo['bar 1'](42)).toEqual(42);
   });
 });

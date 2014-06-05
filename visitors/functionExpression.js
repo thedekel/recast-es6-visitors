@@ -27,19 +27,19 @@ var functionExpressionVisitor = function(node) {
     funcExp.body.body.unshift(restDec);
   };
   if (node.rest != null) {
-    addRestDecToBody(node),
-    this.genericVisit(node);
-    return b.functionExpression(
+    addRestDecToBody(node);
+    //this.genericVisit(node);
+    this.replace(b.functionExpression(
       node.id,
       node.params,
       node.body,
       false,
       node.expression,
       false
-    )
+    ));
   }
-  this.genericVisit(node);
-  return node;
+  //this.genericVisit(node);
+  //return node;
 }
 
 module.exports = functionExpressionVisitor;

@@ -45,6 +45,20 @@ describe('es6-object-short-notation', function() {
     };
   });
 
+  function transform(code) {
+    return recast.prettyPrint(
+      es6Visitor.transform(recast.parse(code, recastOptions))
+    ).code;
+  }
+
+  function expectTransform(code, result) {
+    // use recast to parse both code snippets, visit the ES6 version with
+    // our ES6->ES5 AST converter, and compare the printed result of both
+    // ASTs
+    expect(transform(code)).
+      toEqual(recast.prettyPrint(recast.parse(result, recastOptions)).code);
+  }
+
   it('should capture 2 rest params, having 2 args', function() {
   var code = [
       '(function(x, y, ...args) {',
@@ -52,11 +66,7 @@ describe('es6-object-short-notation', function() {
       '})(1, 2, 3, 4);'
     ].join('\n');
 
-    var ast = recast.parse(code, recastOptions);
-    var visitor = new Visitor();
-    var es5Ast = visitor.visit(ast);
-    var outputCode = recast.print(es5Ast).code;
-    expect(eval(outputCode)).toEqual([1, 2, 2, 3, 4]);
+    expect(eval(transform(code))).toEqual([1, 2, 2, 3, 4]);
   });
 
   it('should transform rest parameters in nested functions', function() {
@@ -68,11 +78,7 @@ describe('es6-object-short-notation', function() {
       '})(1, 2, 3)(4, 5);'
     ].join('\n');
 
-    var ast = recast.parse(code, recastOptions);
-    var visitor = new Visitor();
-    var es5Ast = visitor.visit(ast);
-    var outputCode = recast.print(es5Ast).code;
-    expect(eval(outputCode)).toEqual([2, 3, 4, 5]);
+    expect(eval(transform(code))).toEqual([2, 3, 4, 5]);
   });
 
   it('should supply an array object', function() {
@@ -82,10 +88,6 @@ describe('es6-object-short-notation', function() {
       '})()'
     ].join('\n');
 
-    var ast = recast.parse(code, recastOptions);
-    var visitor = new Visitor();
-    var es5Ast = visitor.visit(ast);
-    var outputCode = recast.print(es5Ast).code;
-    expect(eval(outputCode)).toBe(true);
+    expect(eval(transform(code))).toBe(true);
   });
 });

@@ -29,7 +29,7 @@ var Visitor;
 var recastOptions;
 
 
-// Some tests are taken from jstranform (github.com/facebook/jstransform)
+// Some tests are taken from jstransform (github.com/facebook/jstransform)
 // to ensure compatability
 describe('es6-object-short-notation', function() {
 
@@ -45,6 +45,20 @@ describe('es6-object-short-notation', function() {
     };
   });
 
+  function transform(code) {
+    return recast.prettyPrint(
+      es6Visitor.transform(recast.parse(code, recastOptions))
+    ).code;
+  }
+
+  function expectTransform(code, result) {
+    // use recast to parse both code snippets, visit the ES6 version with
+    // our ES6->ES5 AST converter, and compare the printed result of both
+    // ASTs
+    expect(transform(code)).
+      toEqual(recast.prettyPrint(recast.parse(result, recastOptions)).code);
+  }
+
   it('should transform shorthand properties correctly', function() {
     // simple object that uses shorthand notation for property definition
     var simpleEs6Obj = [
@@ -59,16 +73,7 @@ describe('es6-object-short-notation', function() {
       '};'
     ].join('\n');
 
-    // use recast to parse both code snippets, visit the ES6 version with
-    // our ES6->ES5 AST converter, an dcompare the printed result of both
-    // ASTs
-    var es6Ast = recast.parse(simpleEs6Obj, recastOptions);
-    var es5Ast = recast.parse(simpleEs5Obj, recastOptions);
-    var visitor = new Visitor();
-    var newAst = visitor.visit(es6Ast);
-    // the idea behind using prettyPrint is that equivalent output code will
-    // transform into the exact same output
-    expect(recast.prettyPrint(newAst).code).toEqual(recast.prettyPrint(es5Ast).code);
+    expectTransform(simpleEs6Obj, simpleEs5Obj);
   });
 
   it('should transform and evaluate short notation correctly', function() {
@@ -79,11 +84,7 @@ describe('es6-object-short-notation', function() {
       '})(2, 3);'
     ].join('\n');
 
-    var ast = recast.parse(code, recastOptions);
-    var visitor = new Visitor();
-    var es5Ast = visitor.visit(ast);
-    var outputCode = recast.print(es5Ast).code;
-    expect(eval(outputCode)).toEqual(5);
+    expect(eval(transform(code))).toEqual(5);
   });
 
   it('should transform intricate objects with short notation', function() {
@@ -104,16 +105,6 @@ describe('es6-object-short-notation', function() {
       '}'
     ].join('\n');
 
-    // parse and convert the es6 code to an es5 ast and produce the prettyPrint
-    // output string
-    var ast = recast.parse(inputCode, recastOptions);
-    var visitor = new Visitor();
-    var outputAst = visitor.visit(ast);
-    var outputCode = recast.prettyPrint(outputAst).code;
-    var es5Ast = recast.parse(es5Equivalent, recastOptions);
-
-    // compared the output string of prettyPrint code, with a prettyprint 
-    // version of the given es5 equivalent code
-    expect(outputCode, recast.prettyPrint(es5Ast).code);
+    expectTransform(inputCode, es5Equivalent);
   });
 });

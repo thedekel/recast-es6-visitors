@@ -14,7 +14,11 @@ classVisitors.methodParam = function(node) {
 
 classVisitors.classDeclaration = function(node) {
   this.genericVisit(node);
-  return node;
+  var replacementStatements = b.blockStatement([
+    b.variableDeclaration("var", [b.identifier("hello")]),
+    b.variableDeclaration("var", [b.identifier("world")])
+  ]);
+  return replacementStatements;
 };
 
 classVisitors.classExpression = function(node) {
@@ -32,7 +36,7 @@ classVisitors.superCallExpression = function(node) {
   return node;
 };
 
-classVisitors.superMemberExpressio = function(node) {
+classVisitors.superMemberExpression = function(node) {
   this.genericVisit(node);
   return node;
 };

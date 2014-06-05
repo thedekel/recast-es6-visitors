@@ -47,7 +47,7 @@ describe('es6-arrow-function', function() {
 
   function transform(code) {
     return recast.prettyPrint(
-      (new Visitor()).visit(recast.parse(code, recastOptions))
+      es6Visitor.transform(recast.parse(code, recastOptions))
     ).code;
   }
 
@@ -88,18 +88,8 @@ describe('es6-arrow-function', function() {
       '}.bind(this);'
     ].join('\n');
 
-    // use recast to parse both code snippets, visit the ES6 version with
-    // our ES6->ES5 AST converter, an dcompare the printed result of both
-    // ASTs
-    var es6Ast = recast.parse(simpleEs6Obj, recastOptions);
-    var es5Ast = recast.parse(simpleEs5Obj, recastOptions);
-    var visitor = new Visitor();
-    var newAst = visitor.visit(es6Ast);
-    // the idea behind using prettyPrint is that equivalent output code will
-    // transform into the exact same output
-    expect(recast.prettyPrint(newAst).code).toEqual(recast.prettyPrint(es5Ast).code);
+    expectTransform(simpleEs6Obj, simpleEs5Obj);
   });
-
   it('should capture correct this value at different levels', function() {
 
     var code = [
@@ -110,12 +100,8 @@ describe('es6-arrow-function', function() {
       '  getParentThis: () => this', // captures parent this
       '};'
     ].join('\n');
-    var ast = recast.parse(code, recastOptions);
-    var visitor = new Visitor();
-    var outputAst = visitor.visit(ast);
-    var outputCode = recast.prettyPrint(outputAst).code;
 
-    eval(outputCode);
+    eval(transform(code));
 
     expect(typeof foo.createFooGetter).toBe('function');
     expect(typeof foo.createFooGetter()).toBe('function');
@@ -130,11 +116,7 @@ describe('es6-arrow-function', function() {
 
     var code = '[1, 2, 3].map(x => x * x * this.factor);';
 
-    var ast = recast.parse(code, recastOptions);
-    var visitor = new Visitor();
-    var outputAst = visitor.visit(ast);
-    var outputCode = recast.prettyPrint(outputAst).code;
-    expect(eval(outputCode)).toEqual([10, 40, 90]);
+    expect(eval(transform(code))).toEqual([10, 40, 90]);
   });
 
   it('should filter an array using arrow with two params', function() {
@@ -150,11 +132,7 @@ describe('es6-arrow-function', function() {
       '});'
     ].join('\n');
 
-    var ast = recast.parse(code, recastOptions);
-    var visitor = new Visitor();
-    var outputAst = visitor.visit(ast);
-    var outputCode = recast.prettyPrint(outputAst).code;
-    expect(eval(outputCode)).toEqual([3]);
+    expect(eval(transform(code))).toEqual([3]);
   });
 
   it('should fetch this value data from nested arrow', function() {
@@ -167,11 +145,7 @@ describe('es6-arrow-function', function() {
       '}).run()()();'
     ].join('\n');
 
-    var ast = recast.parse(code, recastOptions);
-    var visitor = new Visitor();
-    var outputAst = visitor.visit(ast);
-    var outputCode = recast.prettyPrint(outputAst).code;
-    expect(eval(outputCode)).toEqual(22);
+    expect(eval(transform(code))).toEqual(22);
   });
 
   it('should correctly transform arrows', function() {
