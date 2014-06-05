@@ -121,8 +121,23 @@ function compile(source, mapOptions) {
   return recast.print(transform(ast), recastOptions);
 }
 
-module.exports.Visitor = ES6Visitor;
+function parse(source, mapOptions) {
+  mapOptions = mapOptions || {};
+
+  var recastOptions = {
+    // Use the harmony branch of Esprima that installs with es6-class
+    // instead of the master branch that recast provides.
+    esprima: esprima,
+
+    sourceFileName: mapOptions.sourceFileName,
+    sourceMapName: mapOptions.sourceMapName
+  };
+
+  var ast = recast.parse(source, recastOptions);
+  return ast;
+}
+
 module.exports.transform = transform;
 module.exports.compile = compile;
-module.exports.visitNode = visitNode;
+module.exports.parse = parse;
 

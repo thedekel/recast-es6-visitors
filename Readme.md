@@ -19,8 +19,6 @@ project:
 {
   ...
   "dependencies": {
-    "recast": "*",
-    "esprima-fb": "^3001.1.0-dev-harmony-fb",
     "recast-es6-visitors": "git://github.com/thedekel/recast-es6-visitors.git",
     ...
   }
@@ -31,10 +29,7 @@ Now you just need to make sure that where you would normally just import
 `recast` and use it, you instead use something similar to the following code:
 
 ```javascript
-var esprima = require('esprima-fb');
-var recast = require('recast');
-var Es6Visitor = require('recast-es6-visitors').Visitor;
-var recastOptions = {esprima: esprima};
+var es6transformer = require('recast-es6-visitors');
 
 
 var sampleCode = [
@@ -49,18 +44,8 @@ var sampleCode = [
   "};"
 ].join('\n');
 
+var outputCode = es6transformer.compile(es6func);
 
-// This will produce an AST of the above code that uses ES6 definitions  from
-// esprima-fb
-var es6Ast = recast.parse(sampleCode, recastOptions);
-// now we can visit the es6 AST with a new instance of the visitor
-var equivalentEs5Ast = new Es6Visitor().visit(es6Ast);
-// once we have the equivalent es5 AST, we can use recast to print the output
-// using either `recast.print()` or `recast.prettyPrint()`
-var outputString = recast.prettyPrint(equivalentEs5Ast).code;
-
-// the outputString should now be valid ES5 code that behaves the same as the
-// ES6 sample code we provided, we can `eval()` it, or save it to a file
 eval(outputString);
 
 // `es6func` was added to the global namespace by `eval`
