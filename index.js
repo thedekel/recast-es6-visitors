@@ -5,22 +5,8 @@ var isArray = types.builtInTypes.array;
 var isObject = types.builtInTypes.object;
 var NodePath = types.NodePath;
 var n = types.namedTypes;
-var classVisitors = require('es6-class');
+var classVisitors = require('es6-class').nodeVisitors;
 
-var ES6Visitor = recast.Visitor.extend({
-  visitProperty: require('./visitors/property'),
-  visitFunctionExpression: require('./visitors/functionExpression'),
-  visitArrowFunctionExpression: require('./visitors/arrowFunctionExpression'),
-  visitTemplateLiteral: require('./visitors/templateLiteral'),
-  visitTaggedTemplateExpression: require('./visitors/taggedTemplateExpression'),
-  visitClassFunctionExpression: classVisitors.transform,
-  visitClassMethodParam: classVisitors.transform,
-  visitClassDeclaration: classVisitors.transform,
-  visitClassExpression: classVisitors.transform,
-  visitPrivateIdentifier: classVisitors.transform,
-  visitSuperCallExpression: classVisitors.transform,
-  visitSuperMemberExpression: classVisitors.transform
-});
 
 function visitNode(node, postOrderTraverse) {
   if (n.Property.check(node)) {
@@ -34,19 +20,19 @@ function visitNode(node, postOrderTraverse) {
   } else if (n.TaggedTemplateExpression.check(node)) {
     require('./visitors/taggedTemplateExpression').call(this, node);
   } else if (n.ClassDeclaration.check(node)) {
-    classVisitors.visitNode.call(this, node);
+    classVisitors.visitClassDeclaration.call(this, node);
   } else if (n.ClassExpression.check(node)) {
-    classVisitors.visitNode.call(this, node);
+    classVisitors.visitClassExpression.call(this, node);
   } else if (n.CallExpression.check(node)) {
     if (n.Identifier.check(node.callee) && node.callee.name === 'super') {
       // super()
-      classVisitors.visitNode.call(this, node);
+    classVisitors.visitSuperCall.call(this, node);
     } else if (n.MemberExpression.check(node.callee) && n.Identifier.check(node.callee.object) && node.callee.object.name === 'super') {
       // super.foo()
-      classVisitors.visitNode.call(this, node);
+    classVisitors.visitSuperCallMemberExpression.call(this, node);
     }
   } else if (n.MemberExpression.check(node) && n.Identifier.check(node.object) && node.object.name === 'super') {
-    classVisitors.visitNode.call(this, node);
+    classVisitors.visitSuperMemberExpression.call(this, node);
   }
 }
 
@@ -140,4 +126,3 @@ function parse(source, mapOptions) {
 module.exports.transform = transform;
 module.exports.compile = compile;
 module.exports.parse = parse;
-

@@ -58,7 +58,7 @@ describe('es6-class', function() {
     expect(transform(code)).
       toEqual(recast.prettyPrint(recast.parse(result, recastOptions)).code);
   }
-
+/*
   it('handles an empty body', function() {
     var code = transform(
       'class Foo {}'
@@ -245,8 +245,8 @@ describe('es6-class', function() {
     var childInst = new Child();
     expect(childInst.constructor).toBe(Child);
   });
+  */
 
-/*
   it('handles super CallExpressions within constructors', function() {
     var code = transform([
       'class Parent {',
@@ -272,6 +272,7 @@ describe('es6-class', function() {
     expect(childInst.childRan).toBe(true);
   });
 
+/*
   it('handles super CallExpressions within proto methods', function() {
     var code = transform([
       'class Parent {',
@@ -302,7 +303,9 @@ describe('es6-class', function() {
     expect(childInst.p2).toBe('b');
     expect(childInst.barRan).toBe(true);
   });
+  */
 
+/*
   it('handles computed super MemberExpressions', function() {
     var code = transform([
       'class Parent {',
