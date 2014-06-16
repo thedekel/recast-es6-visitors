@@ -56,3 +56,6 @@ console.log(resultObj.b) // 42
 console.log(resultObj.myProp) // 5
 console.log(resultObj.conciseMethod()) // true
 ```
+
+In addition to the `.compile()` function featured above, the package has similar `.transform()` and `.parse()` methods.
+`transform` takes a recast AST that's been produced through recast (assuming that recast has a version of esprima that supports the `harmony` features), and produces an equivalent recast AST that's limited to ES5 features. `parse` will take a string of code (just like `compile` above, and return a recast AST that only uses ES5 features.
