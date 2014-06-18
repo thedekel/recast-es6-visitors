@@ -5,9 +5,20 @@ var isArray = types.builtInTypes.array;
 var isObject = types.builtInTypes.object;
 var NodePath = types.NodePath;
 var n = types.namedTypes;
-var classVisitors = require('es6-class').nodeVisitors;
+var classVisitors = require('es6-class').visitors;
 
-
+var visitors = {
+  visitProperty: require('./visitors/property'),
+  visitFunctionExpression: require('./visitors/functionExpression'),
+  visitArrowFunctionExpression: require('./visitors/arrowFunctionExpression'),
+  visitTemplateLiteral: require('./visitors/templateLiteral'),
+  visitTaggedTemplateExpression: require('./visitors/taggedTemplateExpression'),
+  visitClassDeclaration: classVisitors.visitClassDeclaration,
+  visitClassExpression: classVisitors.visitClassExpression,
+  visitCallExpression: classVisitors.visitCallExpression,
+  visitMemberExpression: classVisitors.visitMemberExpression
+};
+/*
 function visitNode(node, postOrderTraverse) {
   if (n.Property.check(node)) {
     require('./visitors/property').call(this, node);
@@ -35,6 +46,7 @@ function visitNode(node, postOrderTraverse) {
     classVisitors.visitSuperMemberExpression.call(this, node);
   }
 }
+*/
 
 /**
  * Transform an Esprima AST generated from ES6 into equivalent ES5
@@ -48,8 +60,10 @@ function visitNode(node, postOrderTraverse) {
  * @param {Object} ast
  * @return {Object}
  */
-function transform(node) {
-  function postOrderTraverse(path) {
+function transform(ast) {
+  var visitedAst = recast.visit(ast, visitors );
+  return visitedAst;
+  /*function postOrderTraverse(path) {
     var value = path.value;
 
     if (isArray.check(value)) {
@@ -81,48 +95,13 @@ function transform(node) {
 
   var rootPath = new NodePath({ root: node });
   postOrderTraverse(rootPath.get("root"));
-  return rootPath.value.root;
+  return rootPath.value.root;*/
 }
 
-/**
- * Transform JavaScript written using ES6 by replacing all classes
- * with the equivalent ES5.
- *
- * @param {string} source
- * @return {string}
- */
-function compile(source, mapOptions) {
-  mapOptions = mapOptions || {};
 
-  var recastOptions = {
-    // Use the harmony branch of Esprima that installs with es6-class
-    // instead of the master branch that recast provides.
-    esprima: esprima,
-
-    sourceFileName: mapOptions.sourceFileName,
-    sourceMapName: mapOptions.sourceMapName
-  };
-
-  var ast = recast.parse(source, recastOptions);
-  return recast.print(transform(ast), recastOptions);
-}
-
-function parse(source, mapOptions) {
-  mapOptions = mapOptions || {};
-
-  var recastOptions = {
-    // Use the harmony branch of Esprima that installs with es6-class
-    // instead of the master branch that recast provides.
-    esprima: esprima,
-
-    sourceFileName: mapOptions.sourceFileName,
-    sourceMapName: mapOptions.sourceMapName
-  };
-
-  var ast = recast.parse(source, recastOptions);
-  return ast;
-}
-
-module.exports.transform = transform;
-module.exports.compile = compile;
-module.exports.parse = parse;
+module.exports = {
+  transform: transform,
+  parse: recast.genParse(transform),
+  compile: recast.genCompile(transform),
+  visitors: visitors
+};

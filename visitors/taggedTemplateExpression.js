@@ -3,7 +3,8 @@ var b = recast.types.builders;
 
 /**
  */
-var taggedTemplateExpression = function(node) {
+var taggedTemplateExpression = function(nodePath) {
+  var node = nodePath.value;
   var cookedLiteralsArray, rawLiteralsArray;
   var templateLiteral = node.original.quasi;
   if (templateLiteral.quasis) {
@@ -66,7 +67,8 @@ var taggedTemplateExpression = function(node) {
     node.tag,
     tagFunctionCallParams
   );
-  this.replace(tagCallExpression);
+  nodePath.replace(tagCallExpression);
+  nodePath.traverse();
 };
 
 module.exports = taggedTemplateExpression;

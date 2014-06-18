@@ -58,7 +58,6 @@ describe('es6-class', function() {
     expect(transform(code)).
       toEqual(recast.prettyPrint(recast.parse(result, recastOptions)).code);
   }
-/*
   it('handles an empty body', function() {
     var code = transform(
       'class Foo {}'
@@ -245,7 +244,6 @@ describe('es6-class', function() {
     var childInst = new Child();
     expect(childInst.constructor).toBe(Child);
   });
-  */
 
   it('handles super CallExpressions within constructors', function() {
     var code = transform([
@@ -271,41 +269,9 @@ describe('es6-class', function() {
     expect(childInst.p2).toBe('b');
     expect(childInst.childRan).toBe(true);
   });
-
 /*
-  it('handles super CallExpressions within proto methods', function() {
-    var code = transform([
-      'class Parent {',
-      '  constructor(p1, p2) {',
-      '    this.p1 = p1;',
-      '    this.p2 = p2;',
-      '  }',
-      '}',
-
-      'class Child extends Parent {',
-      '  constructor() {}',
-      '  bar() {',
-      '    super("a", "b");',
-      '    this.barRan = true;',
-      '  }',
-      '}'
-    ].join('\n'));
-    console.log(code);
-
-    var Child = new Function(code + 'return Child;')();
-
-    var childInst = new Child();
-    expect(childInst.p1).toBe(undefined);
-    expect(childInst.p2).toBe(undefined);
-    expect(childInst.barRan).toBe(undefined);
-    childInst.bar();
-    expect(childInst.p1).toBe('a');
-    expect(childInst.p2).toBe('b');
-    expect(childInst.barRan).toBe(true);
-  });
-  */
-
-/*
+ * This Test fails because es6-class doesn't handle computer member expressions
+ * correctly
   it('handles computed super MemberExpressions', function() {
     var code = transform([
       'class Parent {',
@@ -323,6 +289,7 @@ describe('es6-class', function() {
       '  }',
       '}'
     ].join('\n'));
+    console.log(code);
 
     var Child = new Function(code + 'return Child;')();
 
@@ -331,6 +298,7 @@ describe('es6-class', function() {
     childInst.childIncrement();
     expect(childInst.counter).toBe(2);
   });
+  */
 
   it('handles simple super MemberExpression access', function() {
     var code = transform([
@@ -353,7 +321,6 @@ describe('es6-class', function() {
     var childInst = new Child();
     expect(childInst.getChildFoo()).toBe('foobar');
   });
-
   it('handles CallExpression on a super MemberExpression', function() {
     var code = transform([
       'class Parent {',
@@ -428,7 +395,6 @@ describe('es6-class', function() {
     expect(childInst.p2).toBe('b');
     expect(childInst.barRan).toBe(true);
   });
-  */
 
 });
 

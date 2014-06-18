@@ -6,7 +6,8 @@ var b = recast.types.builders;
  * `...rest` param in function declarations to a variable instantiation based
  * on the `arguments` hidden param on the first line of a function.
  */
-var functionExpressionVisitor = function(node) {
+var functionExpressionVisitor = function(nodePath) {
+  var node = nodePath.value;
   // helper function to produce a new body for the function with an additional
   // variable declaration
   var addRestDecToBody = function(funcExp) {
@@ -29,7 +30,8 @@ var functionExpressionVisitor = function(node) {
   if (node.rest != null) {
     addRestDecToBody(node);
     //this.genericVisit(node);
-    this.replace(b.functionExpression(
+    nodePath.traverse();
+    nodePath.replace(b.functionExpression(
       node.id,
       node.params,
       node.body,
@@ -37,9 +39,11 @@ var functionExpressionVisitor = function(node) {
       node.expression,
       false
     ));
+  } else {
+    nodePath.traverse();
   }
   //this.genericVisit(node);
   //return node;
-}
+} 
 
 module.exports = functionExpressionVisitor;

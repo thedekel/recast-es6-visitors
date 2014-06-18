@@ -58,7 +58,6 @@ describe('es6-arrow-function', function() {
     expect(transform(code)).
       toEqual(recast.prettyPrint(recast.parse(result, recastOptions)).code);
   }
-
   it('should correctly convert a simple arrow function', function() {
     var simpleEs6Obj = [
       'var func = () => {',
@@ -134,7 +133,6 @@ describe('es6-arrow-function', function() {
 
     expect(eval(transform(code))).toEqual([3]);
   });
-
   it('should fetch this value data from nested arrow', function() {
     var code = [
       '({',
@@ -147,7 +145,6 @@ describe('es6-arrow-function', function() {
 
     expect(eval(transform(code))).toEqual(22);
   });
-
   it('should correctly transform arrows', function() {
 
     // 0 params, expression.

@@ -4,7 +4,9 @@ var n = recast.types.namedTypes;
 var Syntax = recast.Syntax;
 var utils = require('../lib/utils')
 
-var arrowFunctionExpressionVisitor = function(node) {
+var arrowFunctionExpressionVisitor = function(nodePath) {
+  nodePath.traverse();
+  var node = nodePath.value;
   //this.genericVisit(node);
   var funcBody = node.body;
   // confirm that the function body has a return statement or add one on the
@@ -28,10 +30,9 @@ var arrowFunctionExpressionVisitor = function(node) {
   if (node.rest) {
     replacementFunc.rest = node.rest;
   }
-  debugger;
   // handle functions that make use of `this` by adding `.bind(this)` to them
   if (utils.containsChildOfType(node.body, Syntax.ThisExpression)) {
-    this.replace( b.callExpression(
+    nodePath.replace( b.callExpression(
       b.memberExpression(
         replacementFunc,
         b.identifier('bind'),
@@ -40,7 +41,7 @@ var arrowFunctionExpressionVisitor = function(node) {
     [b.thisExpression()]
     ));
   } else {
-    this.replace(replacementFunc);
+    nodePath.replace(replacementFunc);
   }
 };
 

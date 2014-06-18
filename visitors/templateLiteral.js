@@ -3,7 +3,8 @@ var b = recast.types.builders;
 
 /**
  */
-var templateLiteralVisitor = function(node) {
+var templateLiteralVisitor = function(nodePath) {
+  var node = nodePath.value;
   //this.genericVisit(node);
   var templateElement, jj, ii;
   var templateElements = node.quasis;
@@ -36,7 +37,8 @@ var templateLiteralVisitor = function(node) {
     }
   }
   returnVal.original = node;
-  this.replace(returnVal);
+  nodePath.replace(returnVal);
+  nodePath.traverse();
 }
 
 module.exports = templateLiteralVisitor;
