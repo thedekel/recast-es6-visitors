@@ -1,6 +1,26 @@
 var recast = require('recast');
 var b = recast.types.builders;
 
+// helper function to produce a new body for the function with an additional
+// variable declaration
+var addRestDecToBody = function(funcExp, rest) {
+  // funcExp.rest is guaranteed to be not `null` if this executes
+  var restDec = b.variableDeclaration(
+    "var",
+    [b.variableDeclarator(
+      b.identifier(rest.name),
+      b.callExpression(
+        b.identifier('Array.prototype.slice.call'),
+        [
+          b.identifier('arguments'),
+          b.literal(funcExp.params.length)
+        ]
+      )
+    )]
+  );
+  funcExp.body.body.unshift(restDec);
+};
+
 /**
  * the function expression visitor is primarily concerned with converting the
  * `...rest` param in function declarations to a variable instantiation based
@@ -8,27 +28,8 @@ var b = recast.types.builders;
  */
 var functionExpressionVisitor = function(nodePath) {
   var node = nodePath.value;
-  // helper function to produce a new body for the function with an additional
-  // variable declaration
-  var addRestDecToBody = function(funcExp) {
-    // funcExp.rest is guaranteed to be not `null` if this executes
-    var restDec = b.variableDeclaration(
-      "var",
-      [b.variableDeclarator(
-        b.identifier(funcExp.rest.name),
-        b.callExpression(
-          b.identifier('Array.prototype.slice.call'),
-          [
-            b.identifier('arguments'),
-            b.literal(funcExp.params.length)
-          ]
-        )
-      )]
-    );
-    funcExp.body.body.unshift(restDec);
-  };
   if (node.rest != null) {
-    addRestDecToBody(node);
+    addRestDecToBody(node, node.rest);
     //this.genericVisit(node);
     nodePath.traverse();
     nodePath.replace(b.functionExpression(
@@ -44,6 +45,7 @@ var functionExpressionVisitor = function(nodePath) {
   }
   //this.genericVisit(node);
   //return node;
-} 
+}
 
 module.exports = functionExpressionVisitor;
+module.exports.addRestDecToBody = addRestDecToBody;

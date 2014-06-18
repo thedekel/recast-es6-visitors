@@ -187,4 +187,17 @@ describe('es6-arrow-function', function() {
       'var action = function(value)  {return this.performAction(value);}.bind(this);'
     );
   });
+
+  it('should correctly transform rest parameters in arrows', function() {
+    var code = [
+      'var restParamFunc = (a, b, ...rest) => {',
+      '  return rest.length;',
+      '};'
+    ].join('\n');
+
+    eval(transform(code));
+    expect(restParamFunc(1,2,3,4)).toEqual(2);
+    expect(restParamFunc(1,2,3,4,5)).toEqual(3);
+    expect(restParamFunc(1,2,3,4,5,6)).toEqual(4);
+  });
 });

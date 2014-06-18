@@ -28,7 +28,7 @@ var arrowFunctionExpressionVisitor = function(nodePath) {
     false
   );
   if (node.rest) {
-    replacementFunc.rest = node.rest;
+    require('./functionExpression').addRestDecToBody(replacementFunc, node.rest);
   }
   // handle functions that make use of `this` by adding `.bind(this)` to them
   if (utils.containsChildOfType(node.body, Syntax.ThisExpression)) {
@@ -43,6 +43,7 @@ var arrowFunctionExpressionVisitor = function(nodePath) {
   } else {
     nodePath.replace(replacementFunc);
   }
+  nodePath.traverse();
 };
 
 module.exports = arrowFunctionExpressionVisitor;
