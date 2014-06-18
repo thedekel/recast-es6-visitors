@@ -31,7 +31,6 @@ Now you just need to make sure that where you would normally just import
 ```javascript
 var es6transformer = require('recast-es6-visitors');
 
-
 var sampleCode = [
   "var es6func = (a, b, ...rest) => {",
   "  var myProp = 5;",
@@ -44,9 +43,9 @@ var sampleCode = [
   "};"
 ].join('\n');
 
-var outputCode = es6transformer.compile(es6func);
+var outputCode = es6transformer.compile(sampleCode).code;
 
-eval(outputString);
+eval(outputCode);
 
 // `es6func` was added to the global namespace by `eval`
 var resultObj = es6func("hello", 42, true, null);
