@@ -31,7 +31,7 @@ var functionExpressionVisitor = function(nodePath) {
   if (node.rest != null) {
     addRestDecToBody(node, node.rest);
     //this.genericVisit(node);
-    nodePath.traverse();
+    this.traverse();
     nodePath.replace(b.functionExpression(
       node.id,
       node.params,
@@ -41,7 +41,7 @@ var functionExpressionVisitor = function(nodePath) {
       false
     ));
   } else {
-    nodePath.traverse();
+    this.traverse();
   }
   //this.genericVisit(node);
   //return node;

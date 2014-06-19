@@ -11,9 +11,9 @@ var propertyVisitor = function(nodePath){
   var node = nodePath.value;
   if (node.shorthand || node.method) {
     nodePath.replace(b.property(node.kind, node.key, node.value, false, false));
-    nodePath.traverse()
+    this.traverse()
   } else {
-    nodePath.traverse()
+    this.traverse()
   }
 }
 

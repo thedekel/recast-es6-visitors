@@ -5,7 +5,7 @@ var Syntax = recast.Syntax;
 var utils = require('../lib/utils')
 
 var arrowFunctionExpressionVisitor = function(nodePath) {
-  nodePath.traverse();
+  this.traverse();
   var node = nodePath.value;
   //this.genericVisit(node);
   var funcBody = node.body;
@@ -43,7 +43,6 @@ var arrowFunctionExpressionVisitor = function(nodePath) {
   } else {
     nodePath.replace(replacementFunc);
   }
-  nodePath.traverse();
 };
 
 module.exports = arrowFunctionExpressionVisitor;
