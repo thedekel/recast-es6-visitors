@@ -1,5 +1,5 @@
 var recast = require('recast');
-var esprima= require('esprima-fb');
+var esprima = require('esprima-fb');
 var types = recast.types;
 var isArray = types.builtInTypes.array;
 var isObject = types.builtInTypes.object;
@@ -24,9 +24,21 @@ function transform(ast) {
   return visitedAst;
 }
 
+function parse(source) {
+  return transform(recast.parse(source, {esprima: esprima}));
+}
+
+function compile(source, pretty) {
+  var ast = parse(source);
+  if (pretty) {
+    return recast.prettyPrint(ast);
+  }
+  return recast.print(ast);
+}
+
 module.exports = {
   transform: transform,
-  parse: recast.genParse(transform),
-  compile: recast.genCompile(transform),
+  parse: parse,
+  compile: compile,
   visitors: visitors
 };

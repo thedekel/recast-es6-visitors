@@ -12,7 +12,7 @@
     "ast-util": "*",
     "es6-class": "git://github.com/thedekel/es6-class.git",
     "esprima-fb": "^3001.1.0-dev-harmony-fb",
-    "recast": "git://github.com/thedekel/recast.git"
+    "recast": "git://github.com/benjamn/recast#PathVisitor"
   },
   "devDependencies": {
     "jest-cli": "^0.1.11"

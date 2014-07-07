@@ -5,7 +5,7 @@ var Syntax = recast.Syntax;
 var utils = require('../lib/utils')
 
 var arrowFunctionExpressionVisitor = function(nodePath) {
-  this.traverse();
+  this.traverseChildren(nodePath);
   var node = nodePath.value;
   //this.genericVisit(node);
   var funcBody = node.body;

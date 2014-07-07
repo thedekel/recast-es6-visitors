@@ -38,7 +38,7 @@ var templateLiteralVisitor = function(nodePath) {
   }
   returnVal.original = node;
   nodePath.replace(returnVal);
-  this.traverse();
+  this.traverseChildren(nodePath);
 }
 
 module.exports = templateLiteralVisitor;

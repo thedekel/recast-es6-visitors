@@ -1,4 +1,4 @@
-var b = require('recast').builders;
+var b = require('recast').types.builders;
 
 /*
  * a visitor designed to handle shorthand property definitios e.g. `{ x, y }`
@@ -11,9 +11,9 @@ var propertyVisitor = function(nodePath){
   var node = nodePath.value;
   if (node.shorthand || node.method) {
     nodePath.replace(b.property(node.kind, node.key, node.value, false, false));
-    this.traverse()
+    this.traverseChildren(nodePath)
   } else {
-    this.traverse()
+    this.traverseChildren(nodePath)
   }
 }
 

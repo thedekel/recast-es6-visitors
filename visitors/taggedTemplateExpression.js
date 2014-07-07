@@ -68,7 +68,7 @@ var taggedTemplateExpression = function(nodePath) {
     tagFunctionCallParams
   );
   nodePath.replace(tagCallExpression);
-  this.traverse();
+  this.traverseChildren(nodePath);
 };
 
 module.exports = taggedTemplateExpression;
